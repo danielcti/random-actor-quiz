@@ -11,34 +11,34 @@ function App() {
   const [chosenActors, setChosenActors] = useState([]); // array com todos os atores que foram 
   const [score, setScore] = useState(0); // placar atual do player
   const [highScore, setHighscore] = useState(0); // melhor placar do player
-  const [page, setPage] = useState(1); // parametro page que seria enviado para a API
 
-  async function fetchData(pg) {
-    setLoading(true);
+  async function getAPIData() {
+    const pg = Math.floor(Math.random() * 499);
     const params = {
       api_key: "dcbc3b3823e75c0234c53f3d37fe29ce",
       language: "en-US",
-      page: pg ? pg : page,
+      page: pg,
     };
-
-    let tries = 0;
 
     const response = await axios.get(
       "https://api.themoviedb.org/3/person/popular",
       { params }
     );
-    const results = response.data.results;
-    let randomIndex = 0;
+    return response.data.results;
+  }
 
+  async function fetchData() {
+    setLoading(true);
+    let tries = 0;
+    let results = await getAPIData();
+    let randomIndex = 0;
     do {
-      if (tries === 19) {
-        const pg = page;
-        setPage(page + 1);
-        return fetchData(pg);
+      if (tries === 10) {
+        results = await getAPIData();
       }
       randomIndex = Math.floor(Math.random() * 19);
       tries++;
-    } while (chosenActors.includes(results[randomIndex].name));
+    } while (chosenActors.includes(results[randomIndex].name) || !results[randomIndex].profile_path);
 
     const randomActor = results[randomIndex];
 
@@ -62,7 +62,6 @@ function App() {
       localStorage.setItem("highScore", score);
     }
     setScore(0);
-    setPage(1);
     fetchData();
   }
 
