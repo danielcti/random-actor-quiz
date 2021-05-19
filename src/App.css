@@ -1,5 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 html {
   height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-image: url(https://images.unsplash.com/photo-1561722798-9a732d141027?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80);
+  background-position: center;
 }
 
 .App {
@@ -8,10 +13,18 @@ html {
   justify-content: center;
   flex-direction: column;
   height: 100vh;
+  max-width: 800px;
+  margin: auto;
 }
 
 .App img {
   max-width: 240px;
+  border: 2px solid #fff;
+  transition: all 1s;
+}
+
+.App img:hover {
+  filter: brightness(80%);
 }
 
 .App .options {
@@ -25,4 +38,30 @@ html {
   flex-direction: column;
   margin: 5px 10px;
   align-items: center;
+}
+
+.option button {
+  padding: 3px 10px;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  background: #d1d1d1;
+  cursor: pointer;
+  transition: all .3s;
+}
+
+.option button:hover {
+  background: #fff;
+  transform: scale(1.05);
+}
+
+.App .scores {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+h1, h2 {
+  color: #fff;
 }

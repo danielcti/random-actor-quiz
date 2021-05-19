@@ -55,13 +55,12 @@ function App() {
     setLoading(false);
   }
 
-  useEffect(() => {
-    fetchData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   function reset() {
     setChosenActors([]);
-    setHighscore(score);
+    if (score > highScore) {
+      setHighscore(score);
+      localStorage.setItem("highScore", score);
+    }
     setScore(0);
     setPage(1);
     fetchData();
@@ -94,9 +93,17 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    fetchData();
+    const highScore = localStorage.getItem("highScore");
+    if (highScore) {
+      setHighscore(highScore);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="App">
+      <h1>Random Actor Quiz</h1>
       {loading ? (
         <h1>Loading...</h1>
       ) : (
@@ -113,8 +120,10 @@ function App() {
           </div>
         </>
       )}
-      <h2>Score:{score}</h2>
-      <h2>Highscore:{highScore}</h2>
+      <div className="scores">
+        <h2>Score: {score}</h2>
+        <h2>Highscore: {highScore}</h2>
+      </div>
     </div>
   );
 }
