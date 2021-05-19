@@ -3,22 +3,15 @@ import "./App.css";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-import actorsGenderList from "./actorsGenderList.json";
+import { shuffle, chooseRandomActors } from './utils/helperFunctions';
 
 function App() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [chosenActors, setChosenActors] = useState([]);
-  const [score, setScore] = useState(0);
-  const [page, setPage] = useState(1);
-
-  function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
+  const [data, setData] = useState(null); // objeto com os dados principais do jogo
+  const [loading, setLoading] = useState(true); // booleano que define se está esperando uma chamada da API
+  const [chosenActors, setChosenActors] = useState([]); // array com todos os atores que foram 
+  const [score, setScore] = useState(0); // placar atual do player
+  const [highScore, setHighscore] = useState(0); // melhor placar do player
+  const [page, setPage] = useState(1); // parametro page que seria enviado para a API
 
   async function fetchData(pg) {
     setLoading(true);
@@ -48,28 +41,10 @@ function App() {
     } while (chosenActors.includes(results[randomIndex].name));
 
     const randomActor = results[randomIndex];
-    const randomActorGender = actorsGenderList[results[randomIndex].name];
-    console.log(randomActorGender);
 
     setChosenActors([...chosenActors, randomActor.name]);
 
-    let otherPeople = [];
-    for (let i = 0; i < 4; i++) {
-      let randNumber = 0;
-      let gender = "";
-      do {
-        randNumber = Math.floor(Math.random() * 19);
-        gender = actorsGenderList[results[randNumber].name];
-        console.log(results[randNumber].name, gender);
-      } while (
-        gender !== randomActorGender ||
-        randNumber === randomIndex ||
-        otherPeople.includes(results[randNumber].name)
-      );
-      otherPeople.push(results[randNumber].name);
-    }
-
-    otherPeople.push(randomActor.name);
+    let otherPeople = chooseRandomActors(randomActor, randomIndex, results);
     otherPeople = shuffle(otherPeople);
 
     setData({
@@ -84,6 +59,16 @@ function App() {
     fetchData();
   }, []);
 
+  function reset() {
+    setChosenActors([]);
+    setHighscore(score);
+    setScore(0);
+    setPage(1);
+    fetchData();
+  }
+
+
+
   async function handleClick(e) {
     if (e.target.value === data.name) {
       setScore(score + 1);
@@ -91,24 +76,26 @@ function App() {
         text: "Right answer. Good job!!!",
         duration: 2000,
         close: true,
-        gravity: "top", // `top` or `bottom`
-        position: "center", // `left`, `center` or `right`
+        gravity: "top",
+        position: "center",
         backgroundColor: "light-blue",
-        stopOnFocus: true, // Prevents dismissing of toast on hover
+        stopOnFocus: true,
       }).showToast();
+      fetchData();
     } else {
       Toastify({
-        text: "Wrong answer!!!",
-        duration: 2000,
+        text: `Wrong answer! Your score was ${score}.`,
+        duration: 3000,
         close: true,
-        gravity: "top", // `top` or `bottom`
-        position: "center", // `left`, `center` or `right`
+        gravity: "top",
+        position: "center",
         backgroundColor: "red",
-        stopOnFocus: true, // Prevents dismissing of toast on hover
+        stopOnFocus: true,
       }).showToast();
+      setTimeout(() => reset(), 3000);
     }
-    fetchData();
   }
+
 
   return (
     <div className="App">
@@ -129,6 +116,7 @@ function App() {
         </>
       )}
       <h2>Score:{score}</h2>
+      <h2>Highscore:{highScore}</h2>
     </div>
   );
 }
