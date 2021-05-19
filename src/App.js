@@ -57,7 +57,7 @@ function App() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function reset() {
     setChosenActors([]);
@@ -66,8 +66,6 @@ function App() {
     setPage(1);
     fetchData();
   }
-
-
 
   async function handleClick(e) {
     if (e.target.value === data.name) {
@@ -103,7 +101,7 @@ function App() {
         <h1>Loading...</h1>
       ) : (
         <>
-          <img src={data.avatar} />
+          <img src={data.avatar} alt={data.name} />
           <div className="options">
             {data.otherPeople.map((person, i) => (
               <div className="option" key={i}>
