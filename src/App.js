@@ -108,7 +108,7 @@ function App() {
       ) : (
         <>
           <img src={data.avatar} alt={data.name} />
-          <div className="options">
+          <div className="options" data-testid="actors-list">
             {data.otherPeople.map((person, i) => (
               <div className="option" key={i}>
                 <button onClick={handleClick} value={person}>
